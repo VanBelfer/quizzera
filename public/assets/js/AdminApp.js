@@ -232,6 +232,12 @@ class AdminApp {
      * Handle state changes from StateManager
      */
     handleStateChange(newState, oldState) {
+        console.log('[AdminApp] State change:', {
+            phase: newState.gameState?.phase,
+            players: newState.players?.length,
+            answerStats: newState.answerStats
+        });
+
         // Update game status badge
         this.updateGameStatusBadge(newState.gameState);
 
@@ -265,6 +271,9 @@ class AdminApp {
         if (newState.gameState?.buzzers?.length > (oldState?.gameState?.buzzers?.length || 0)) {
             this.onNewBuzzer(newState.gameState.buzzers);
         }
+
+        // AUTO-ADVANCE: When all players answered, automatically go to next question
+        this.checkAutoAdvance(newState, oldState);
     }
 
     /**
@@ -748,7 +757,67 @@ class AdminApp {
     }
 
     /**
-     * Auto-advance to reveal phase when all players answered
+     * Check if we should auto-advance to next question
+     */
+    async checkAutoAdvance(newState, oldState) {
+        const { answerStats, gameState } = newState;
+        const oldAnswerStats = oldState?.answerStats;
+        
+        // Only auto-advance if:
+        // 1. We're in options_shown phase
+        // 2. All players have answered
+        // 3. This is a NEW "all answered" state (wasn't all answered before)
+        if (gameState?.phase === 'options_shown' && 
+            answerStats?.allAnswered && 
+            !oldAnswerStats?.allAnswered) {
+            
+            console.log('[AdminApp] ✅ ALL PLAYERS ANSWERED! Auto-advancing...');
+            console.log('[AdminApp] Answer stats:', answerStats);
+            
+            // Small delay to let users see the "All answered" message
+            setTimeout(() => this.autoAdvanceToNextQuestion(), 1500);
+        }
+    }
+
+    /**
+     * Auto-advance: reveal answer, then go to next question
+     */
+    async autoAdvanceToNextQuestion() {
+        try {
+            console.log('[AdminApp] Step 1: Revealing correct answer...');
+            
+            // Step 1: Reveal the correct answer
+            const revealResult = await this.api.revealCorrect();
+            if (!revealResult.success) {
+                console.error('[AdminApp] Failed to reveal:', revealResult);
+                return;
+            }
+            
+            this.feedback.show('success', 'All answered! Revealing...');
+            await this.state.refresh();
+            
+            // Step 2: After a delay, go to next question
+            setTimeout(async () => {
+                console.log('[AdminApp] Step 2: Moving to next question...');
+                
+                const nextResult = await this.api.nextQuestion();
+                if (nextResult.success) {
+                    this.feedback.show('success', 'Next question!');
+                    console.log('[AdminApp] ✅ Successfully moved to next question');
+                } else {
+                    console.log('[AdminApp] Next question result:', nextResult);
+                }
+                await this.state.refresh();
+            }, 2000); // 2 second delay to show the correct answer
+            
+        } catch (error) {
+            console.error('[AdminApp] Auto-advance error:', error);
+            this.handleError(error);
+        }
+    }
+
+    /**
+     * Manual auto-advance to reveal phase when all players answered
      */
     async autoAdvance() {
         try {

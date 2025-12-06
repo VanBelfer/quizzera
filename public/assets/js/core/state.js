@@ -60,6 +60,14 @@ export class StateManager {
         try {
             const data = await this.fetchData();
             
+            console.log('[StateManager] Polling result:', {
+                method: this.fetchMethod,
+                players: data?.players?.length || 0,
+                phase: data?.gameState?.phase,
+                answerStats: data?.answerStats ? `${data.answerStats.answersCount}/${data.answerStats.activeCount}` : 'N/A',
+                allAnswered: data?.answerStats?.allAnswered
+            });
+            
             if (data && data.success !== false) {
                 const oldState = this.state;
                 this.state = data;

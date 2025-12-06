@@ -136,10 +136,13 @@ export class OptionsPhase {
         this.selectedAnswer = answerIndex;
 
         try {
+            console.log(`[OptionsPhase] Player ${this.playerId} submitting answer: ${answerIndex}`);
             const result = await this.api.submitAnswer(this.playerId, answerIndex);
+            console.log('[OptionsPhase] Submit result:', result);
 
             if (result.success) {
                 this.hasAnswered = true;
+                console.log(`[OptionsPhase] ✅ Answer registered! isCorrect: ${result.isCorrect}`);
 
                 // Show immediate feedback if available
                 if (result.isCorrect !== undefined) {
