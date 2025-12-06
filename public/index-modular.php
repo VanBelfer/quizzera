@@ -142,6 +142,23 @@
         <i class="fas fa-question"></i>
     </div>
     
+    <!-- Notes Toggle for Players -->
+    <div class="notes-toggle" id="notesToggle">
+        <i class="fas fa-sticky-note"></i>
+        <span class="notes-badge hidden" id="notesBadge">!</span>
+    </div>
+    
+    <!-- Player Notes Panel -->
+    <div class="player-notes-panel hidden" id="playerNotesPanel">
+        <div class="notes-panel-header">
+            <h3><i class="fas fa-sticky-note"></i> Class Notes</h3>
+            <button class="notes-close" id="notesClose">&times;</button>
+        </div>
+        <div class="notes-panel-content" id="playerNotesContent">
+            <p class="notes-empty">No notes available yet.</p>
+        </div>
+    </div>
+    
     <div class="help-panel" id="helpPanel">
         <div class="help-header">
             <div class="help-title">Quiz Help</div>

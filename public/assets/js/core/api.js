@@ -160,10 +160,17 @@ export class ApiClient {
     }
 
     /**
+     * Player: Get student notes (same as getNotes but named differently for clarity)
+     */
+    async getStudentNotes() {
+        return this.post('getNotes');
+    }
+
+    /**
      * Admin: Save notes
      */
-    async saveNotes(notes) {
-        return this.post('saveNotes', { notes });
+    async saveNotes(content) {
+        return this.post('saveNotes', { content });
     }
 
     /**

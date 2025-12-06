@@ -2,107 +2,15 @@
  * Player Notes Panel (Read-only)
  */
 
-.student-notes-panel {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    width: 350px;
-    max-height: 80vh;
-    z-index: var(--z-fixed);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    display: none;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-}
-
-.student-notes-panel.active {
-    display: block;
-}
-
-.student-notes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    background-color: var(--bg-gray-900);
-}
-
-.student-notes-header h3 {
-    color: var(--cyan-400);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    font-size: 1rem;
-}
-
-.student-notes-close {
-    background: none;
-    border: none;
-    color: var(--text-gray-400);
-    font-size: 1.25rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.student-notes-close:hover {
-    color: var(--text-white);
-}
-
-.student-notes-content {
-    padding: 1rem;
-    background-color: var(--bg-gray-800);
-    max-height: calc(80vh - 60px);
-    overflow-y: auto;
-}
-
-/* Rendered markdown in student notes */
-.student-notes-content h1,
-.student-notes-content h2,
-.student-notes-content h3 {
-    color: var(--cyan-400);
-    margin: 1rem 0 0.5rem 0;
-}
-
-.student-notes-content h1:first-child,
-.student-notes-content h2:first-child,
-.student-notes-content h3:first-child {
-    margin-top: 0;
-}
-
-.student-notes-content p {
-    margin-bottom: 0.75rem;
-    color: var(--text-gray-300);
-}
-
-.student-notes-content ul,
-.student-notes-content ol {
-    margin-left: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: var(--text-gray-300);
-}
-
-.student-notes-content a {
-    color: var(--cyan-400);
-}
-
-.student-notes-content code {
-    background-color: var(--bg-gray-700);
-    padding: 0.125rem 0.25rem;
-    border-radius: var(--radius-sm);
-    font-family: monospace;
-    font-size: 0.875em;
-}
-
-/* Notes toggle button */
-.notes-button {
+/* Notes Toggle Button */
+.notes-toggle {
     position: fixed;
     bottom: 1rem;
     left: 60px;
     width: 40px;
     height: 40px;
     border-radius: var(--radius-full);
-    display: flex;
+    display: none; /* Hidden by default, shown when notes exist */
     align-items: center;
     justify-content: center;
     z-index: var(--z-fixed);
@@ -114,16 +22,144 @@
     box-shadow: var(--shadow-md);
 }
 
-.notes-button:hover {
+.notes-toggle:hover {
     background-color: var(--purple-600);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
+/* Notification badge */
+.notes-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    background: var(--red-500);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.notes-badge:not(.hidden) {
+    display: flex;
+}
+
+/* Panel */
+.player-notes-panel {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 350px;
+    max-height: 80vh;
+    z-index: var(--z-modal);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    display: block;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--bg-gray-800);
+}
+
+.player-notes-panel.hidden {
+    display: none;
+}
+
+.notes-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-gray-900);
+    border-bottom: 1px solid var(--bg-gray-700);
+}
+
+.notes-panel-header h3 {
+    color: var(--cyan-400);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.notes-close {
+    background: none;
+    border: none;
+    color: var(--text-gray-400);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    line-height: 1;
+}
+
+.notes-close:hover {
+    color: var(--text-white);
+}
+
+.notes-panel-content {
+    padding: 1rem;
+    max-height: calc(80vh - 60px);
+    overflow-y: auto;
+}
+
+/* Rendered markdown in notes */
+.notes-panel-content h1,
+.notes-panel-content h2,
+.notes-panel-content h3 {
+    color: var(--cyan-400);
+    margin: 1rem 0 0.5rem 0;
+}
+
+.notes-panel-content h1:first-child,
+.notes-panel-content h2:first-child,
+.notes-panel-content h3:first-child {
+    margin-top: 0;
+}
+
+.notes-panel-content p {
+    margin-bottom: 0.75rem;
+    color: var(--text-gray-300);
+}
+
+.notes-panel-content ul,
+.notes-panel-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-gray-300);
+}
+
+.notes-panel-content a {
+    color: var(--cyan-400);
+}
+
+.notes-panel-content code {
+    background-color: var(--bg-gray-700);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.875em;
+}
+
+.notes-empty {
+    color: var(--text-gray-500);
+    text-align: center;
+    font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-    .student-notes-panel {
+    .player-notes-panel {
         width: 90%;
         right: 5%;
+    }
+    
+    .notes-toggle {
+        left: auto;
+        right: 60px;
     }
 }

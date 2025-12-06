@@ -210,6 +210,9 @@ class PlayerApp {
                     this.state.startPolling();
                     this.modules.screenManager.show('waiting');
 
+                    // Load initial notes
+                    await this.loadPlayerNotes();
+
                     // Check current game state
                     await this.state.refresh();
                 } else {
@@ -239,6 +242,9 @@ class PlayerApp {
                 this.state.startPolling();
                 this.modules.screenManager.show('waiting');
 
+                // Load initial notes
+                await this.loadPlayerNotes();
+
                 this.feedback.show('success', `Welcome back, ${this.playerNickname}!`);
             } else {
                 // Clear stored data and show login
@@ -260,46 +266,6 @@ class PlayerApp {
         this.playerId = null;
         this.playerNickname = null;
         this.myAnswers = {};
-    }
-
-    /**
-     * Setup notes toggle button
-     */
-    setupNotesToggle() {
-        const notesBtn = document.getElementById('studentNotesBtn');
-        const notesPanel = document.getElementById('studentNotesPanel');
-        const closeBtn = document.getElementById('closeStudentNotes');
-
-        if (notesBtn && notesPanel) {
-            notesBtn.addEventListener('click', () => {
-                notesPanel.classList.toggle('hidden');
-                this.loadStudentNotes();
-            });
-
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    notesPanel.classList.add('hidden');
-                });
-            }
-        }
-    }
-
-    /**
-     * Load student notes from server
-     */
-    async loadStudentNotes() {
-        const contentEl = document.getElementById('studentNotesContent');
-        if (!contentEl) return;
-
-        try {
-            const result = await this.api.getNotes();
-            if (result.success && result.notes) {
-                const renderer = new MarkdownRenderer();
-                contentEl.innerHTML = renderer.render(result.notes.content || '');
-            }
-        } catch (error) {
-            contentEl.innerHTML = '<p class="error">Failed to load notes</p>';
-        }
     }
 
     /**
@@ -330,10 +296,11 @@ class PlayerApp {
         }
 
         // Handle different game phases
-        if (!gameState?.gameStarted) {
-            this.handleWaitingState();
-        } else if (gameState.phase === 'finished') {
+        // Check 'finished' phase FIRST because gameStarted is set to false when finished
+        if (gameState?.phase === 'finished') {
             this.handleFinishedState(newState);
+        } else if (!gameState?.gameStarted) {
+            this.handleWaitingState();
         } else {
             this.handleActiveGameState(newState, oldState);
         }
@@ -343,6 +310,13 @@ class PlayerApp {
 
         // Update status message
         this.updateStatusMessage(gameState);
+
+        // Check for notes updates when stateVersion changes
+        const newVersion = newState.stateVersion;
+        if (this.lastStateVersion !== undefined && newVersion !== this.lastStateVersion) {
+            this.checkNotesUpdate();
+        }
+        this.lastStateVersion = newVersion;
     }
 
     /**
@@ -565,6 +539,136 @@ class PlayerApp {
         this.myAnswers = {};
         this.currentQuestionIndex = -1;
         this.modules.screenManager.show('waiting');
+    }
+
+    /**
+     * Setup notes toggle button and panel
+     */
+    setupNotesToggle() {
+        const toggleBtn = document.getElementById('notesToggle');
+        const panel = document.getElementById('playerNotesPanel');
+        const closeBtn = document.getElementById('notesClose');
+        
+        if (!toggleBtn || !panel) {
+            console.log('Notes panel elements not found');
+            return;
+        }
+
+        // Toggle panel visibility
+        toggleBtn.addEventListener('click', () => {
+            panel.classList.toggle('hidden');
+            // Clear badge when opening panel
+            const badge = document.getElementById('notesBadge');
+            if (badge) {
+                badge.classList.add('hidden');
+            }
+        });
+
+        // Close button
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                panel.classList.add('hidden');
+            });
+        }
+
+        // Close on clicking outside
+        document.addEventListener('click', (e) => {
+            if (!panel.classList.contains('hidden') && 
+                !panel.contains(e.target) && 
+                !toggleBtn.contains(e.target)) {
+                panel.classList.add('hidden');
+            }
+        });
+
+        console.log('Notes toggle setup complete');
+    }
+
+    /**
+     * Load player notes from server
+     */
+    async loadPlayerNotes() {
+        try {
+            const result = await this.api.getStudentNotes();
+            if (result.success && result.notes) {
+                const content = result.notes.content || '';
+                this.lastNotesContent = content;
+                this.displayPlayerNotes(content);
+                
+                // Show toggle button if there are notes
+                const toggleBtn = document.getElementById('notesToggle');
+                if (toggleBtn) {
+                    toggleBtn.style.display = content.trim() ? 'flex' : 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading player notes:', error);
+        }
+    }
+
+    /**
+     * Check for notes updates (called when stateVersion changes)
+     */
+    async checkNotesUpdate() {
+        try {
+            const result = await this.api.getStudentNotes();
+            if (!result.success || !result.notes) return;
+
+            const content = result.notes.content || '';
+
+            // If notes changed, show notification
+            if (this.lastNotesContent !== undefined && 
+                content !== this.lastNotesContent &&
+                content.trim()) {
+                
+                this.lastNotesContent = content;
+                this.displayPlayerNotes(content);
+
+                // Show badge on toggle button
+                const badge = document.getElementById('notesBadge');
+                if (badge) {
+                    badge.classList.remove('hidden');
+                }
+
+                // Show toast notification
+                this.messages.info('📝 Teacher updated the notes!');
+                
+                // Play sound (tick as notification)
+                this.modules.audio?.play('tick');
+
+                // Show toggle button if hidden
+                const toggleBtn = document.getElementById('notesToggle');
+                if (toggleBtn) {
+                    toggleBtn.style.display = 'flex';
+                }
+            } else if (this.lastNotesContent === undefined) {
+                // First load
+                this.lastNotesContent = content;
+                this.displayPlayerNotes(content);
+                
+                const toggleBtn = document.getElementById('notesToggle');
+                if (toggleBtn && content.trim()) {
+                    toggleBtn.style.display = 'flex';
+                }
+            }
+        } catch (error) {
+            console.error('Error checking notes update:', error);
+        }
+    }
+
+    /**
+     * Display notes in the panel
+     */
+    displayPlayerNotes(notesContent) {
+        const contentEl = document.getElementById('playerNotesContent');
+        if (!contentEl) return;
+
+        if (notesContent && notesContent.trim()) {
+            // Render markdown content
+            const md = new MarkdownRenderer();
+            contentEl.innerHTML = md.render(notesContent);
+        } else {
+            contentEl.innerHTML = '<p class="no-notes">No notes available yet.</p>';
+        }
     }
 
     /**
