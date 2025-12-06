@@ -763,12 +763,21 @@ class AdminApp {
         const { answerStats, gameState } = newState;
         const oldAnswerStats = oldState?.answerStats;
         
+        // Skip auto-advance on first load (oldState is null)
+        if (!oldState) {
+            console.log('[AdminApp] Skipping auto-advance check on initial load');
+            return;
+        }
+        
         // Only auto-advance if:
         // 1. We're in options_shown phase
         // 2. All players have answered
-        // 3. This is a NEW "all answered" state (wasn't all answered before)
+        // 3. There are actually players who answered (not just 0/0)
+        // 4. This is a NEW "all answered" state (wasn't all answered before)
         if (gameState?.phase === 'options_shown' && 
             answerStats?.allAnswered && 
+            answerStats?.answersCount > 0 &&
+            answerStats?.activeCount > 0 &&
             !oldAnswerStats?.allAnswered) {
             
             console.log('[AdminApp] ✅ ALL PLAYERS ANSWERED! Auto-advancing...');
