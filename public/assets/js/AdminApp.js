@@ -238,6 +238,12 @@ class AdminApp {
         // Update player count
         this.updatePlayerCount(newState.players);
 
+        // Update player list if visible
+        const playerList = document.getElementById('playerList');
+        if (playerList && !playerList.classList.contains('hidden')) {
+            this.updatePlayerListContent();
+        }
+
         // Update progress bar
         this.updateProgress(newState.gameState, newState.questions);
 
@@ -400,11 +406,21 @@ class AdminApp {
         
         const borderColor = allAnswered ? 'var(--green-500)' : 'var(--cyan-400)';
         
+        // Auto-advance button when all answered
+        const autoAdvanceBtn = allAnswered ? `
+            <button class="btn btn-success btn-sm auto-advance-btn" onclick="window.adminApp.autoAdvance()" style="margin-left: 1rem;">
+                <i class="fas fa-forward"></i> Continue
+            </button>
+        ` : '';
+        
         return `
             <div class="answer-stats" style="margin-bottom: 1rem; padding: 0.75rem; background-color: var(--bg-gray-900); border-radius: 0.5rem; border: 2px solid ${borderColor};">
-                <strong style="color: var(--text-white);">Answer Progress:</strong>
-                <span style="color: var(--cyan-400); margin-left: 0.5rem;">${answersCount} / ${activeCount}</span>
-                ${allAnswered ? '<span style="color: var(--green-500); margin-left: 1rem;"><i class="fas fa-check-circle"></i> All answered!</span>' : ''}
+                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                    <strong style="color: var(--text-white);">Answer Progress:</strong>
+                    <span style="color: var(--cyan-400); margin-left: 0.5rem;">${answersCount} / ${activeCount}</span>
+                    ${allAnswered ? '<span style="color: var(--green-500); margin-left: 1rem;"><i class="fas fa-check-circle"></i> All answered!</span>' : ''}
+                    ${autoAdvanceBtn}
+                </div>
                 ${notAnsweredNames && notAnsweredNames.length > 0 ? `
                     <div style="margin-top: 0.5rem; color: var(--text-gray-300); font-size: 0.875rem;">
                         <i class="fas fa-clock"></i> Still waiting: ${notAnsweredNames.join(', ')}
@@ -728,6 +744,23 @@ class AdminApp {
             });
         } catch (e) {
             // No sound available
+        }
+    }
+
+    /**
+     * Auto-advance to reveal phase when all players answered
+     */
+    async autoAdvance() {
+        try {
+            const result = await this.api.revealCorrect();
+            if (result.success) {
+                this.feedback.show('success', 'Revealing answer...');
+                await this.state.refresh();
+            } else {
+                this.messages.error(result.error || 'Failed to reveal answer');
+            }
+        } catch (error) {
+            this.handleError(error);
         }
     }
 

@@ -167,6 +167,23 @@ export class OptionsPhase {
         if (!buttonElement) return;
 
         buttonElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+        
+        // Show feedback message
+        const feedbackEl = document.createElement('div');
+        feedbackEl.className = `answer-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+        feedbackEl.innerHTML = isCorrect 
+            ? '<i class="fas fa-check-circle"></i> Correct!' 
+            : '<i class="fas fa-times-circle"></i> Incorrect';
+        
+        // Insert after the button
+        buttonElement.parentNode?.insertBefore(feedbackEl, buttonElement.nextSibling);
+        
+        // Also show a toast notification
+        if (window.showSuccess && isCorrect) {
+            window.showSuccess('Correct answer!');
+        } else if (window.showError && !isCorrect) {
+            window.showError('Incorrect answer');
+        }
     }
 
     /**

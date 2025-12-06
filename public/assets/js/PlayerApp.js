@@ -11,9 +11,13 @@ import { onReady, debounce, escapeHtml, formatTime } from './core/utils.js';
 // Shared components
 import { HelpPanel } from './components/HelpPanel.js';
 import { NetworkStatus } from './components/NetworkStatus.js';
-import { MessageSystem } from './components/MessageSystem.js';
+import { MessageSystem, showSuccess, showError } from './components/MessageSystem.js';
 import { MarkdownRenderer } from './components/MarkdownRenderer.js';
 import { ActionFeedback } from './components/ActionFeedback.js';
+
+// Make showSuccess/showError available globally for OptionsPhase
+window.showSuccess = showSuccess;
+window.showError = showError;
 
 // Player modules
 import { BuzzerPhase } from './player/BuzzerPhase.js';
@@ -322,6 +326,7 @@ class PlayerApp {
         if (questionChanged) {
             this.currentQuestionIndex = gameState?.currentQuestion || 0;
             this.modules.options.reset();
+            this.modules.buzzer.reset();  // Reset buzzer state for new question
         }
 
         // Handle different game phases
