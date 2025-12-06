@@ -52,6 +52,10 @@ try {
                 break;
             }
             $result = $game->joinGame(trim($input['nickname']));
+            // Increment state version so admin polling picks up new players
+            if ($result['success'] && !$result['existing']) {
+                $game->incrementStateVersion();
+            }
             $response = array_merge($result, [
                 'stateVersion' => $game->getStateVersion()
             ]);

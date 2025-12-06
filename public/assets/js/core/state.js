@@ -152,10 +152,12 @@ export class StateManager {
      */
     startPolling() {
         if (this.isPolling) {
+            console.log('[StateManager] Polling already running');
             return;
         }
         
         this.isPolling = true;
+        console.log('[StateManager] Starting polling with interval:', this.pollDelay, 'ms');
         
         const poll = async () => {
             if (!this.isPolling) return;
@@ -163,9 +165,20 @@ export class StateManager {
             try {
                 const data = await this.fetchData();
                 
+                // Log every poll cycle
+                console.log('[StateManager] Poll cycle:', {
+                    method: this.fetchMethod,
+                    players: data?.players?.length || 0,
+                    phase: data?.gameState?.phase,
+                    serverVersion: data?.stateVersion,
+                    localVersion: this.stateVersion,
+                    versionChanged: data?.stateVersion !== this.stateVersion
+                });
+                
                 if (data && data.stateVersion !== undefined) {
                     // Update if version changed OR if this is first fetch (state is null)
                     if (this.state === null || data.stateVersion !== this.stateVersion) {
+                        console.log('[StateManager] State version changed, notifying listeners');
                         const oldState = this.state;
                         this.state = data;
                         this.stateVersion = data.stateVersion;
