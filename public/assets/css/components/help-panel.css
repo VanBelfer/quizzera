@@ -1,0 +1,116 @@
+/**
+ * Help Panel Component
+ * Sliding panel from bottom-left
+ */
+
+.help-toggle {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--purple-500);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: var(--z-fixed);
+    transition: var(--transition);
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: none;
+}
+
+.help-toggle:hover {
+    background-color: var(--purple-600);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.help-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 300px;
+    height: 80vh;
+    background-color: var(--bg-gray-800);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+    z-index: var(--z-modal-backdrop);
+    overflow-y: auto;
+    pointer-events: none;
+}
+
+.help-panel.active {
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bg-gray-700);
+}
+
+.help-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--cyan-400);
+}
+
+.help-close {
+    background: none;
+    border: none;
+    color: var(--text-gray-400);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.help-close:hover {
+    color: var(--text-white);
+}
+
+.help-content {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.help-section {
+    margin-bottom: 1.5rem;
+}
+
+.help-section h3 {
+    color: var(--cyan-400);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.help-section p {
+    color: var(--text-gray-300);
+    margin-bottom: 0.5rem;
+}
+
+.help-tip {
+    background-color: rgba(139, 92, 246, 0.1);
+    border-left: 3px solid var(--purple-500);
+    padding: 0.75rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 0.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .help-panel {
+        width: 90%;
+    }
+}

@@ -1,0 +1,79 @@
+/**
+ * Player Buzzer Component
+ */
+
+.buzzer-btn {
+    background-color: var(--red-500);
+    color: var(--text-white);
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    width: 150px;
+    height: 150px;
+    margin: 2rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.buzzer-btn:hover:not(:disabled) {
+    background-color: var(--red-600);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(239, 68, 68, 0.4);
+}
+
+.buzzer-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.buzzer-btn:disabled {
+    background-color: var(--bg-gray-700);
+    color: var(--text-gray-400);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Pressed effect */
+.buzzer-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.buzzer-btn.pressed::after {
+    opacity: 1;
+}
+
+/* Buzzer phase container */
+.buzzer-phase {
+    text-align: center;
+}
+
+.buzzer-phase p {
+    color: var(--text-gray-400);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .buzzer-btn {
+        width: 120px;
+        height: 120px;
+        font-size: 1.25rem;
+    }
+}

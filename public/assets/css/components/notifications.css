@@ -1,0 +1,110 @@
+/**
+ * Notifications Components
+ * Network status, toast messages, action feedback
+ */
+
+/* Network Status Indicator */
+.network-status {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: var(--z-fixed);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.network-status.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.network-status.online {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--green-500);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.network-status.offline {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--red-500);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Toast Message System */
+.message-system {
+    position: fixed;
+    bottom: 60px;
+    right: 1rem;
+    width: 300px;
+    z-index: var(--z-modal-backdrop);
+}
+
+.message {
+    background-color: var(--bg-gray-800);
+    color: var(--text-white);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    box-shadow: var(--shadow-md);
+    animation: slideIn 0.3s ease, fadeOut 0.3s ease 5s forwards;
+    opacity: 1;
+}
+
+.message.info {
+    border-left: 4px solid var(--cyan-500);
+}
+
+.message.warning {
+    border-left: 4px solid var(--yellow-500);
+}
+
+.message.success {
+    border-left: 4px solid var(--green-500);
+}
+
+.message.error {
+    border-left: 4px solid var(--red-500);
+}
+
+/* Action Feedback (Centered popup) */
+.action-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg-gray-800);
+    color: var(--text-white);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: var(--z-tooltip);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.action-feedback.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.action-feedback.success {
+    border-left: 4px solid var(--green-500);
+}
+
+.action-feedback.error {
+    border-left: 4px solid var(--red-500);
+}
+
+.action-feedback.info {
+    border-left: 4px solid var(--cyan-400);
+}
+
+.action-feedback i {
+    margin-right: 0.5rem;
+}

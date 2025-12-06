@@ -1,0 +1,125 @@
+/**
+ * Admin Results Display
+ */
+
+.results-container {
+    margin-top: 1rem;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.results-header h3 {
+    color: var(--text-white);
+    margin: 0;
+}
+
+.results-navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.results-navigation .btn {
+    margin: 0;
+}
+
+/* Question result card */
+.result-card {
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.result-card h4 {
+    color: var(--text-white);
+    margin-bottom: 1rem;
+}
+
+.result-question-text {
+    font-size: 1.125rem;
+    color: var(--text-gray-300);
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--bg-gray-700);
+}
+
+/* Statistics display */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    background-color: var(--bg-gray-800);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--cyan-400);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-gray-400);
+    text-transform: uppercase;
+}
+
+.stat-item.success .stat-value {
+    color: var(--green-500);
+}
+
+.stat-item.danger .stat-value {
+    color: var(--red-500);
+}
+
+/* Player answers list */
+.player-answers-list {
+    margin-top: 1rem;
+}
+
+.player-answer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: var(--bg-gray-800);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+}
+
+.player-answer-item.correct {
+    border-left: 3px solid var(--green-500);
+}
+
+.player-answer-item.incorrect {
+    border-left: 3px solid var(--red-500);
+}
+
+.player-answer-name {
+    font-weight: 600;
+    color: var(--text-white);
+}
+
+.player-answer-choice {
+    font-size: 0.875rem;
+    color: var(--text-gray-400);
+}
+
+.player-answer-time {
+    font-size: 0.75rem;
+    color: var(--text-gray-400);
+}

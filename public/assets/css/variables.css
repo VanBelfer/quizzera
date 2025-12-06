@@ -1,0 +1,58 @@
+/**
+ * CSS Custom Properties (Design Tokens)
+ * Shared across all quiz application pages
+ */
+
+:root {
+    /* Background Colors */
+    --bg-dark: #111827;
+    --bg-gray-800: #1f2937;
+    --bg-gray-700: #374151;
+    --bg-gray-900: #0f172a;
+    --bg-gray-600: #4b5563;
+
+    /* Text Colors */
+    --text-white: #ffffff;
+    --text-gray-300: #d1d5db;
+    --text-gray-400: #9ca3af;
+
+    /* Brand Colors */
+    --cyan-400: #22d3ee;
+    --cyan-500: #06b6d4;
+    --cyan-600: #0891b2;
+    --cyan-700: #0e7490;
+
+    /* Semantic Colors */
+    --green-500: #10b981;
+    --green-600: #059669;
+    --red-500: #ef4444;
+    --red-600: #dc2626;
+    --yellow-500: #f59e0b;
+    --purple-500: #8b5cf6;
+    --purple-600: #7c3aed;
+
+    /* Transitions */
+    --transition: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
+    --transition-slow: all 0.5s ease;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 50%;
+
+    /* Z-Index Scale */
+    --z-dropdown: 10;
+    --z-sticky: 50;
+    --z-fixed: 90;
+    --z-modal-backdrop: 99;
+    --z-modal: 100;
+    --z-tooltip: 200;
+}

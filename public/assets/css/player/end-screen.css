@@ -1,0 +1,156 @@
+/**
+ * Player End Screen / Results
+ */
+
+.end-screen {
+    text-align: center;
+}
+
+.end-screen h1 {
+    margin-bottom: 1rem;
+}
+
+.end-screen .subtitle {
+    margin-bottom: 2rem;
+}
+
+/* Score display */
+.score-display {
+    margin: 2rem 0;
+}
+
+.score-big {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--cyan-400);
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 1rem;
+    color: var(--text-gray-400);
+    margin-top: 0.5rem;
+}
+
+/* Performance summary */
+.performance-summary {
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.performance-summary h3 {
+    color: var(--cyan-400);
+    margin-bottom: 1rem;
+}
+
+.performance-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--bg-gray-700);
+}
+
+.performance-stat:last-child {
+    border-bottom: none;
+}
+
+.performance-stat-label {
+    color: var(--text-gray-400);
+}
+
+.performance-stat-value {
+    font-weight: 600;
+    color: var(--text-white);
+}
+
+.performance-stat-value.success {
+    color: var(--green-500);
+}
+
+.performance-stat-value.danger {
+    color: var(--red-500);
+}
+
+/* Answer breakdown */
+.answer-breakdown {
+    margin-top: 2rem;
+}
+
+.answer-breakdown h3 {
+    color: var(--text-white);
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.breakdown-item {
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.breakdown-item.correct {
+    border-left: 3px solid var(--green-500);
+}
+
+.breakdown-item.incorrect {
+    border-left: 3px solid var(--red-500);
+}
+
+.breakdown-question {
+    flex: 1;
+    color: var(--text-gray-300);
+    font-size: 0.9rem;
+}
+
+.breakdown-result {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.breakdown-result i {
+    font-size: 1.25rem;
+}
+
+.breakdown-result.correct i {
+    color: var(--green-500);
+}
+
+.breakdown-result.incorrect i {
+    color: var(--red-500);
+}
+
+/* Action buttons */
+.end-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Trophy/achievement icon */
+.trophy-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.trophy-icon.gold {
+    color: #ffd700;
+}
+
+.trophy-icon.silver {
+    color: #c0c0c0;
+}
+
+.trophy-icon.bronze {
+    color: #cd7f32;
+}

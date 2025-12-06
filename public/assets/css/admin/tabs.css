@@ -1,0 +1,43 @@
+/**
+ * Admin Tabs Navigation
+ */
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--bg-gray-700);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.tab {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+    color: var(--text-gray-400);
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.tab:hover {
+    color: var(--text-gray-300);
+}
+
+.tab.active {
+    color: var(--cyan-400);
+    border-bottom-color: var(--cyan-400);
+}
+
+/* Tab content sections */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}

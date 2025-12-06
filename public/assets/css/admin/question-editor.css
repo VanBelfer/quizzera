@@ -1,0 +1,61 @@
+/**
+ * Admin Question Editor
+ */
+
+.question-editor {
+    background-color: var(--bg-gray-900);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+}
+
+.question-editor h3 {
+    color: var(--text-white);
+    margin-bottom: 1rem;
+}
+
+/* Sample JSON display */
+.sample-json {
+    background-color: var(--bg-gray-800);
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--cyan-400);
+    margin-top: 1rem;
+}
+
+.sample-json pre {
+    color: var(--text-gray-300);
+    font-size: 0.75rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+}
+
+/* JSON textarea */
+.json-editor {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.8rem;
+    min-height: 300px;
+    tab-size: 2;
+}
+
+/* Validation message */
+.validation-message {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+}
+
+.validation-message.valid {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--green-500);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.validation-message.invalid {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--red-500);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}

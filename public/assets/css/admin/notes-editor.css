@@ -1,0 +1,134 @@
+/**
+ * Admin Notes Editor Panel
+ */
+
+.notes-panel {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 350px;
+    max-height: 80vh;
+    z-index: var(--z-fixed);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.notes-header h3 {
+    color: var(--cyan-400);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.notes-header-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.notes-content,
+.notes-editor {
+    padding: 1rem;
+    background-color: var(--bg-gray-800);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    max-height: calc(80vh - 80px);
+    overflow-y: auto;
+}
+
+/* Rendered markdown content */
+.notes-content h1,
+.notes-content h2,
+.notes-content h3 {
+    color: var(--cyan-400);
+    margin: 1rem 0 0.5rem 0;
+}
+
+.notes-content h1:first-child,
+.notes-content h2:first-child,
+.notes-content h3:first-child {
+    margin-top: 0;
+}
+
+.notes-content p {
+    margin-bottom: 0.75rem;
+    color: var(--text-gray-300);
+}
+
+.notes-content ul,
+.notes-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-gray-300);
+}
+
+.notes-content a {
+    color: var(--cyan-400);
+}
+
+.notes-content a:hover {
+    text-decoration: underline;
+}
+
+.notes-content code {
+    background-color: var(--bg-gray-700);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.875em;
+}
+
+/* Formatting toolbar */
+.formatting-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-sm);
+    flex-wrap: wrap;
+}
+
+.formatting-toolbar button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    background-color: var(--bg-gray-700);
+    color: var(--text-gray-300);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.formatting-toolbar button:hover {
+    background-color: var(--bg-gray-600);
+    color: var(--text-white);
+}
+
+.formatting-toolbar button.active {
+    background-color: var(--cyan-600);
+    color: var(--text-white);
+}
+
+/* Notes textarea */
+.notes-textarea {
+    min-height: 200px;
+    width: 100%;
+    font-family: inherit;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .notes-panel {
+        width: 90%;
+        right: 5%;
+    }
+}

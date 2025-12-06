@@ -1,0 +1,125 @@
+/**
+ * Button Components
+ */
+
+.btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+/* Primary - Cyan */
+.btn-primary {
+    background-color: var(--cyan-600);
+    color: var(--text-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--cyan-700);
+}
+
+/* Success - Green */
+.btn-success {
+    background-color: var(--green-600);
+    color: var(--text-white);
+}
+
+.btn-success:hover {
+    background-color: var(--green-500);
+}
+
+/* Danger - Red */
+.btn-danger {
+    background-color: var(--red-600);
+    color: var(--text-white);
+}
+
+.btn-danger:hover {
+    background-color: var(--red-500);
+}
+
+/* Warning - Yellow */
+.btn-warning {
+    background-color: var(--yellow-500);
+    color: var(--bg-dark);
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+}
+
+/* Purple */
+.btn-purple {
+    background-color: var(--purple-500);
+    color: var(--text-white);
+}
+
+.btn-purple:hover {
+    background-color: var(--purple-600);
+}
+
+/* Secondary - Ghost */
+.btn-secondary {
+    background-color: var(--bg-gray-700);
+    color: var(--text-gray-300);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-gray-600);
+    color: var(--text-white);
+}
+
+/* Disabled state */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Button sizes */
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.btn-lg {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+}
+
+/* Full width */
+.btn-block {
+    width: 100%;
+}
+
+/* Icon-only button (FAB style) */
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}

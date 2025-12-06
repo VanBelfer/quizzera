@@ -1,0 +1,99 @@
+/**
+ * Card Components
+ */
+
+.card {
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    border: 1px solid var(--bg-gray-700);
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--cyan-500);
+}
+
+.card-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--bg-gray-700);
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin: 0;
+}
+
+.card-body {
+    color: var(--text-gray-300);
+}
+
+.card-footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--bg-gray-700);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Session card variant */
+.session-card {
+    background-color: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--bg-gray-700);
+    transition: var(--transition);
+}
+
+.session-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--cyan-500);
+}
+
+/* Answer summary card */
+.answer-summary {
+    background-color: var(--bg-gray-900);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+}
+
+.answer-option {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.answer-correct {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--green-500);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.answer-incorrect {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--red-500);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.player-count {
+    font-size: 0.875rem;
+    color: var(--text-gray-300);
+}
+
+/* Clickable card */
+.card-clickable {
+    cursor: pointer;
+}
+
+.card-clickable:active {
+    transform: translateY(0);
+}

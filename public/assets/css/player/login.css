@@ -1,0 +1,75 @@
+/**
+ * Player Login Screen
+ */
+
+/* Body for player pages - centered */
+body.player-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Narrow container for player */
+.container.player-container {
+    max-width: 800px;
+}
+
+/* Screen base */
+.screen {
+    background-color: var(--bg-gray-800);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Login screen */
+.login-screen {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-screen h1 {
+    margin-bottom: 0.5rem;
+}
+
+.login-screen .subtitle {
+    margin-bottom: 1.5rem;
+}
+
+.login-screen .btn-primary {
+    width: 100%;
+}
+
+/* Waiting screen */
+.waiting-screen {
+    text-align: center;
+}
+
+.waiting-screen h1 {
+    margin-bottom: 1rem;
+}
+
+/* Admin link */
+.admin-link {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: var(--bg-gray-700);
+    color: var(--text-gray-400);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.admin-link:hover {
+    background-color: var(--bg-gray-800);
+    color: var(--text-white);
+}
