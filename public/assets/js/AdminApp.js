@@ -670,7 +670,7 @@ class AdminApp {
                     ` : ''}
                     ${notAnsweredCount > 0 ? `
                     <div style="margin-top: 1rem; color: var(--text-gray-400); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-clock"></i> ${notAnsweredCount} ${notAnsweredCount === 1 ? 'player hasn\\'t' : 'players haven\\'t'} answered yet
+                        <i class="fas fa-clock"></i> ${notAnsweredCount} ${notAnsweredCount === 1 ? 'player has not' : 'players have not'} answered yet
                     </div>
                     ` : ''}
                 </div>
