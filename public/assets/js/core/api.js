@@ -51,10 +51,17 @@ export class ApiClient {
     }
 
     /**
-     * Convenience method for game state
+     * Convenience method for game state (player view)
      */
     async getGameState() {
         return this.post('getGameState');
+    }
+
+    /**
+     * Admin: Get full game data with answerStats
+     */
+    async getGameData() {
+        return this.post('getGameData');
     }
 
     /**

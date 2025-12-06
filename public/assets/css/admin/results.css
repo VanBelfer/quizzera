@@ -123,3 +123,45 @@
     font-size: 0.75rem;
     color: var(--text-gray-400);
 }
+
+/* Answer grid for results display */
+.answer-summary {
+    background-color: var(--bg-gray-800);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+}
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.answer-option {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-gray-700);
+    transition: var(--transition);
+}
+
+.answer-option.answer-correct {
+    background-color: rgba(16, 185, 129, 0.15);
+    border: 2px solid var(--green-500);
+    color: var(--green-400);
+}
+
+.answer-option.answer-incorrect {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--bg-gray-600);
+    color: var(--text-gray-300);
+}
+
+.answer-option .player-count {
+    font-size: 0.75rem;
+    color: var(--text-gray-400);
+}
+
+.answer-option.answer-correct .player-count {
+    color: var(--green-400);
+}

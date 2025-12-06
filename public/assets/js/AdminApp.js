@@ -29,9 +29,11 @@ class AdminApp {
         this.api = new ApiClient('api.php');
 
         // Initialize state manager with polling (don't auto-start)
+        // Admin uses getGameData for answerStats, not getGameState
         this.state = new StateManager(this.api, {
             pollingInterval: 1000,
-            autoStart: false  // We'll start after subscribing
+            autoStart: false,  // We'll start after subscribing
+            fetchMethod: 'getGameData'  // Use getGameData for admin
         });
 
         // Initialize message system for notifications
@@ -333,7 +335,7 @@ class AdminApp {
         const container = document.getElementById('currentQuestionContainer');
         if (!container) return;
 
-        const { gameState, questions } = state;
+        const { gameState, questions, answerStats } = state;
 
         if (!gameState?.gameStarted || !questions?.length) {
             container.innerHTML = `
@@ -354,6 +356,7 @@ class AdminApp {
 
         const buzzersHtml = this.renderBuzzersList(gameState.buzzers, state.players);
         const optionsHtml = this.renderOptionsPreview(currentQ, gameState);
+        const answerStatsHtml = this.renderAnswerStats(answerStats, gameState);
 
         container.innerHTML = `
             <div class="current-question-card">
@@ -364,6 +367,8 @@ class AdminApp {
                     <div class="question-text">${escapeHtml(currentQ.question)}</div>
                     ${currentQ.image ? `<img src="${escapeHtml(currentQ.image)}" class="question-image" alt="Question image">` : ''}
                 </div>
+                
+                ${gameState.phase === 'options_shown' ? answerStatsHtml : ''}
                 
                 ${optionsHtml}
                 
@@ -383,6 +388,30 @@ class AdminApp {
 
         // Setup mark as spoken buttons
         this.setupSpokenButtons(container);
+    }
+
+    /**
+     * Render answer statistics for admin view
+     */
+    renderAnswerStats(answerStats, gameState) {
+        if (!answerStats) return '';
+        
+        const { answersCount, activeCount, allAnswered, notAnsweredNames } = answerStats;
+        
+        const borderColor = allAnswered ? 'var(--green-500)' : 'var(--cyan-400)';
+        
+        return `
+            <div class="answer-stats" style="margin-bottom: 1rem; padding: 0.75rem; background-color: var(--bg-gray-900); border-radius: 0.5rem; border: 2px solid ${borderColor};">
+                <strong style="color: var(--text-white);">Answer Progress:</strong>
+                <span style="color: var(--cyan-400); margin-left: 0.5rem;">${answersCount} / ${activeCount}</span>
+                ${allAnswered ? '<span style="color: var(--green-500); margin-left: 1rem;"><i class="fas fa-check-circle"></i> All answered!</span>' : ''}
+                ${notAnsweredNames && notAnsweredNames.length > 0 ? `
+                    <div style="margin-top: 0.5rem; color: var(--text-gray-300); font-size: 0.875rem;">
+                        <i class="fas fa-clock"></i> Still waiting: ${notAnsweredNames.join(', ')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
     }
 
     /**
@@ -523,8 +552,138 @@ class AdminApp {
         const container = document.getElementById('resultsContainer');
         if (!container) return;
 
-        // Implementation of results view...
-        // This would render the detailed results for each question
+        const { gameState, questions, players } = state;
+        const indicator = document.getElementById('resultsQuestionIndicator');
+        const prevBtn = document.getElementById('prevQuestionBtn');
+        const nextBtn = document.getElementById('nextQuestionBtn');
+
+        // Initialize resultsQuestionIndex if not set
+        if (this.resultsQuestionIndex === undefined) {
+            this.resultsQuestionIndex = 0;
+        }
+
+        // Update question indicator and buttons
+        if (questions && questions.length > 0) {
+            if (indicator) {
+                indicator.textContent = `Question ${this.resultsQuestionIndex + 1} of ${questions.length}`;
+            }
+            if (prevBtn) prevBtn.disabled = (this.resultsQuestionIndex === 0);
+            if (nextBtn) nextBtn.disabled = (this.resultsQuestionIndex >= questions.length - 1);
+        }
+
+        if (!questions || questions.length === 0) {
+            container.innerHTML = `
+                <p style="color: var(--text-gray-400); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> No questions available
+                </p>`;
+            return;
+        }
+
+        const question = questions[this.resultsQuestionIndex];
+        if (!question) return;
+
+        // Get answers for this question (answers is an array)
+        const answers = gameState?.answers || [];
+        const questionAnswers = answers.filter(answer => answer.question === this.resultsQuestionIndex);
+
+        // Count answers per option
+        const answerCounts = {};
+        question.options.forEach((_, index) => {
+            answerCounts[index] = 0;
+        });
+        questionAnswers.forEach(answer => {
+            if (answerCounts.hasOwnProperty(answer.answer)) {
+                answerCounts[answer.answer]++;
+            }
+        });
+
+        // Categorize players by correct/incorrect
+        const correctPlayers = [];
+        const incorrectPlayers = [];
+
+        (players || []).forEach(player => {
+            const playerAnswer = questionAnswers.find(a => a.playerId === player.id);
+            if (playerAnswer) {
+                const isCorrect = playerAnswer.answer === question.correct;
+                const playerInfo = {
+                    name: player.nickname,
+                    answer: question.options[playerAnswer.answer],
+                    isCorrect
+                };
+                if (isCorrect) {
+                    correctPlayers.push(playerInfo);
+                } else {
+                    incorrectPlayers.push(playerInfo);
+                }
+            }
+        });
+
+        const notAnsweredCount = (players?.length || 0) - questionAnswers.length;
+
+        container.innerHTML = `
+            <div class="answer-summary">
+                <h4 style="margin-bottom: 1rem; color: var(--text-white); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-question-circle"></i> ${escapeHtml(question.question)}
+                </h4>
+                <div class="answers-grid">
+                    ${question.options.map((option, index) => `
+                        <div class="answer-option ${index === question.correct ? 'answer-correct' : 'answer-incorrect'}">
+                            ${escapeHtml(option)}
+                            <div class="player-count" style="display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
+                                <i class="fas ${index === question.correct ? 'fa-check' : 'fa-times'}"></i>
+                                ${answerCounts[index]} ${answerCounts[index] === 1 ? 'player' : 'players'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--bg-gray-900); border-radius: 0.5rem;">
+                    <h4 style="color: var(--cyan-400); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-users"></i> Participant Responses
+                    </h4>
+                    ${correctPlayers.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--green-500); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-check-circle"></i> Correct Answers (${correctPlayers.length})
+                        </h5>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${correctPlayers.map(p => `
+                                <span style="background-color: rgba(16, 185, 129, 0.1); color: var(--green-500); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;">
+                                    ${escapeHtml(p.name)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${incorrectPlayers.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--red-500); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-times-circle"></i> Incorrect Answers (${incorrectPlayers.length})
+                        </h5>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${incorrectPlayers.map(p => `
+                                <span style="background-color: rgba(239, 68, 68, 0.1); color: var(--red-500); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;">
+                                    ${escapeHtml(p.name)}: ${escapeHtml(p.answer)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${notAnsweredCount > 0 ? `
+                    <div style="margin-top: 1rem; color: var(--text-gray-400); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-clock"></i> ${notAnsweredCount} ${notAnsweredCount === 1 ? 'player hasn\\'t' : 'players haven\\'t'} answered yet
+                    </div>
+                    ` : ''}
+                </div>
+                ${question.explanation ? `
+                <div style="margin-top: 1.5rem; background-color: var(--bg-gray-700); padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--cyan-400);">
+                    <h4 style="color: var(--cyan-400); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-book"></i> Teaching Explanation
+                    </h4>
+                    <p style="color: var(--text-gray-300); line-height: 1.5;">${escapeHtml(question.explanation)}</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
     }
 
     /**

@@ -12,6 +12,7 @@ export class StateManager {
         this.pollInterval = null;
         this.pollDelay = options.pollingInterval || 1500;
         this.autoStart = options.autoStart !== false;
+        this.fetchMethod = options.fetchMethod || 'getGameState'; // Allow admin to use getGameData
         this.lastSuccessfulFetch = null;
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 5;
@@ -38,6 +39,16 @@ export class StateManager {
     }
 
     /**
+     * Fetch data from server using configured method
+     */
+    async fetchData() {
+        if (this.fetchMethod === 'getGameData' && this.api.getGameData) {
+            return this.api.getGameData();
+        }
+        return this.api.getGameState();
+    }
+
+    /**
      * Fetch fresh state from server
      */
     async refresh() {
@@ -47,7 +58,7 @@ export class StateManager {
         }
         
         try {
-            const data = await this.api.getGameState();
+            const data = await this.fetchData();
             
             if (data && data.success !== false) {
                 const oldState = this.state;
@@ -142,7 +153,7 @@ export class StateManager {
             if (!this.isPolling) return;
             
             try {
-                const data = await this.api.getGameState();
+                const data = await this.fetchData();
                 
                 if (data && data.stateVersion !== undefined) {
                     // Update if version changed OR if this is first fetch (state is null)
