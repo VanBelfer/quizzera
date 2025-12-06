@@ -145,8 +145,8 @@ export class StateManager {
                 const data = await this.api.getGameState();
                 
                 if (data && data.stateVersion !== undefined) {
-                    // Only update if version changed
-                    if (data.stateVersion !== this.stateVersion) {
+                    // Update if version changed OR if this is first fetch (state is null)
+                    if (this.state === null || data.stateVersion !== this.stateVersion) {
                         const oldState = this.state;
                         this.state = data;
                         this.stateVersion = data.stateVersion;

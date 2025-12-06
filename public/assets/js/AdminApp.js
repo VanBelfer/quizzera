@@ -28,10 +28,10 @@ class AdminApp {
         // Initialize API client (relative path works in any subfolder)
         this.api = new ApiClient('api.php');
 
-        // Initialize state manager with polling
+        // Initialize state manager with polling (don't auto-start)
         this.state = new StateManager(this.api, {
             pollingInterval: 1000,
-            autoStart: true
+            autoStart: false  // We'll start after subscribing
         });
 
         // Initialize message system for notifications
@@ -118,6 +118,9 @@ class AdminApp {
 
             // Subscribe to state changes
             this.state.subscribe(this.handleStateChange);
+
+            // Start polling now that we're subscribed
+            this.state.startPolling();
 
             // Setup global error handler
             window.addEventListener('unhandledrejection', (event) => {

@@ -152,7 +152,7 @@ export class OptionsPhase {
             } else {
                 // Re-enable buttons on failure
                 buttons.forEach(btn => btn.disabled = false);
-                showError(result.error || 'Failed to submit answer');
+                showError(result.error || result.reason || 'Failed to submit answer');
             }
         } catch (error) {
             console.error('Submit answer error:', error);
