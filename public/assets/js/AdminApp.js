@@ -6,7 +6,7 @@
 // Core modules
 import { ApiClient } from './core/api.js';
 import { StateManager } from './core/state.js';
-import { onReady, debounce, escapeHtml, formatTime } from './core/utils.js';
+import { onReady, debounce, escapeHtml, escapeHtmlWithBreaks, formatTime } from './core/utils.js';
 
 // Shared components
 import { HelpPanel } from './components/HelpPanel.js';
@@ -289,7 +289,14 @@ class AdminApp {
         } else if (gameState.phase === 'finished') {
             html = '<span class="status-finished">Finished</span>';
         } else {
-            html = '<span class="status-active">Active</span>';
+            // Show current phase instead of generic "Active"
+            const phaseNames = {
+                'question_shown': 'Question',
+                'options_shown': 'Options',
+                'reveal': 'Reveal'
+            };
+            const phaseName = phaseNames[gameState.phase] || 'In Progress';
+            html = `<span class="status-active">${phaseName}</span>`;
         }
 
         badge.innerHTML = html;
@@ -379,7 +386,7 @@ class AdminApp {
                     <div class="question-number">
                         Question ${gameState.currentQuestion + 1} of ${questions.length}
                     </div>
-                    <div class="question-text">${escapeHtml(currentQ.question)}</div>
+                    <div class="question-text">${escapeHtmlWithBreaks(currentQ.question)}</div>
                     ${currentQ.image ? `<img src="${escapeHtml(currentQ.image)}" class="question-image" alt="Question image">` : ''}
                 </div>
                 
@@ -577,7 +584,7 @@ class AdminApp {
         const container = document.getElementById('resultsContainer');
         if (!container) return;
 
-        const { gameState, questions, players } = state;
+        const { gameState, questions, players, allAnswers } = state;
         const indicator = document.getElementById('resultsQuestionIndicator');
         const prevBtn = document.getElementById('prevQuestionBtn');
         const nextBtn = document.getElementById('nextQuestionBtn');
@@ -607,8 +614,8 @@ class AdminApp {
         const question = questions[this.resultsQuestionIndex];
         if (!question) return;
 
-        // Get answers for this question (answers is an array)
-        const answers = gameState?.answers || [];
+        // Use allAnswers (all questions) instead of gameState.answers (current question only)
+        const answers = allAnswers || gameState?.answers || [];
         const questionAnswers = answers.filter(answer => answer.question === this.resultsQuestionIndex);
 
         // Count answers per option
@@ -647,8 +654,9 @@ class AdminApp {
 
         container.innerHTML = `
             <div class="answer-summary">
-                <h4 style="margin-bottom: 1rem; color: var(--text-white); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-question-circle"></i> ${escapeHtml(question.question)}
+                <h4 style="margin-bottom: 1rem; color: var(--text-white); display: flex; align-items: flex-start; gap: 0.5rem;">
+                    <i class="fas fa-question-circle" style="margin-top: 0.2rem;"></i>
+                    <span>${escapeHtmlWithBreaks(question.question)}</span>
                 </h4>
                 <div class="answers-grid">
                     ${question.options.map((option, index) => `

@@ -217,11 +217,15 @@ try {
             $gameState = $game->getFullGameState();
             $currentQuestion = (int)$gameState['currentQuestion'];
             
+            // For admin, include ALL answers (for Results tab), not just current question
+            $allAnswers = $game->getAllAnswers();
+            
             $response = [
                 'success' => true,
                 'gameState' => $gameState,
                 'questions' => $game->getQuestions(),
                 'players' => $game->getPlayers(),
+                'allAnswers' => $allAnswers,  // All answers for Results tab
                 'stateVersion' => $game->getStateVersion(),
                 'serverTime' => time(),
                 'answerStats' => $game->getAnswerStats($currentQuestion)

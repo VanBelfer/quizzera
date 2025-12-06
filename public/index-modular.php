@@ -176,22 +176,6 @@
         </div>
     </div>
 
-    <!-- Student Notes Button -->
-    <div class="student-notes-toggle" id="studentNotesBtn">
-        <i class="fas fa-sticky-note"></i>
-    </div>
-
-    <!-- Student Notes Panel -->
-    <div id="studentNotesPanel" class="student-notes-panel hidden">
-        <div class="notes-header">
-            <h3><i class="fas fa-sticky-note"></i> Class Notes</h3>
-            <button id="closeStudentNotes" class="close-btn">&times;</button>
-        </div>
-        <div id="studentNotesContent" class="notes-content">
-            <!-- Notes loaded by JavaScript -->
-        </div>
-    </div>
-
     <!-- Network Status Indicator -->
     <div class="network-status" id="networkStatus">
         <i class="fas fa-circle-notch fa-spin"></i> Connecting...

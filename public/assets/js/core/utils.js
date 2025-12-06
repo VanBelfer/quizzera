@@ -68,6 +68,14 @@ export function escapeHtml(text) {
 }
 
 /**
+ * Escape HTML and preserve newlines (convert \n to <br>)
+ */
+export function escapeHtmlWithBreaks(text) {
+    if (!text) return '';
+    return escapeHtml(text).replace(/\\n|\n/g, '<br>');
+}
+
+/**
  * Format timestamp
  */
 export function formatTime(timestamp) {

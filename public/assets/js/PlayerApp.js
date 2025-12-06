@@ -6,7 +6,7 @@
 // Core modules
 import { ApiClient } from './core/api.js';
 import { StateManager } from './core/state.js';
-import { onReady, debounce, escapeHtml, formatTime } from './core/utils.js';
+import { onReady, debounce, escapeHtml, escapeHtmlWithBreaks, formatTime } from './core/utils.js';
 
 // Shared components
 import { HelpPanel } from './components/HelpPanel.js';
@@ -416,7 +416,8 @@ class PlayerApp {
         }
 
         if (textEl && question) {
-            textEl.textContent = question.question;
+            // Use innerHTML with escaped text to preserve line breaks
+            textEl.innerHTML = escapeHtmlWithBreaks(question.question);
         }
 
         if (imageEl && question) {

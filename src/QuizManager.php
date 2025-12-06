@@ -84,16 +84,36 @@ class QuizManager {
      */
     private function initializeDefaultQuestions(): void {
         $defaultQuestions = [
-            ["question" => "What is phishing?", "options" => ["Deceptive emails or sites that try to steal information like logins.", "Fishing for real tuna with enterprise-grade hooks."], "correct" => 0, "explanation" => "Phishing is a cybersecurity attack where criminals send fake emails, texts, or create fake websites that look legitimate to trick people into giving away sensitive information."],
-            ["question" => "What is spear phishing?", "options" => ["Highly targeted phishing aimed at a specific person or role.", "Throwing a literal spear at the office Wi-Fi router."], "correct" => 0, "explanation" => "Unlike regular phishing that targets many people, spear phishing is a focused attack aimed at a specific individual or organization."],
-            ["question" => "What is smishing?", "options" => ["Phishing by SMS/text messages, often with urgent links.", "Sending memes to cure all security issues."], "correct" => 0, "explanation" => "Smishing combines 'SMS' and 'phishing.' It's when criminals send text messages with malicious links or requests for personal information."],
-            ["question" => "What is vishing?", "options" => ["Voice phishing by phone/VoIP to extract sensitive info.", "Singing loudly until the attacker gives up."], "correct" => 0, "explanation" => "Vishing is 'voice phishing' - fraudulent phone calls where criminals pretend to be from banks, tech support, or government agencies."],
-            ["question" => "What is social engineering?", "options" => ["Manipulating people to bypass procedures or reveal info.", "Designing social media avatars with perfect symmetry."], "correct" => 0, "explanation" => "Social engineering is psychological manipulation - tricking people into breaking normal security procedures."],
-            ["question" => "What is pretexting?", "options" => ["Using a believable story or fake identity to gain trust and data.", "Texting someone before texting them again, just in case."], "correct" => 0, "explanation" => "Pretexting involves creating a fabricated scenario (pretext) to engage a victim and gain their trust."],
-            ["question" => "What is credential stuffing?", "options" => ["Trying leaked username/password pairs on other sites to exploit reuse.", "Shoving printed passwords into a keyboard for safekeeping."], "correct" => 0, "explanation" => "When people reuse the same password on multiple sites, criminals take username/password combinations from data breaches and automatically try them on other websites."],
-            ["question" => "What is a data breach?", "options" => ["Unauthorized access or leak of confidential data.", "A beach where laptops go to relax after patches."], "correct" => 0, "explanation" => "A data breach occurs when sensitive, protected, or confidential data is copied, transmitted, viewed, stolen, or used by someone without authorization."],
-            ["question" => "What is a passphrase?", "options" => ["A longer, memorable phrase used instead of a short complex password.", "A magic word that unlocks free pizza on Fridays."], "correct" => 0, "explanation" => "A passphrase is a longer password made of multiple words or a sentence that's easier to remember than random characters but still secure."],
-            ["question" => "What is multi-factor authentication (MFA)?", "options" => ["An extra login factor (e.g., app code, key) to protect accounts if passwords leak.", "Asking a colleague to say \"please\" twice before logging in."], "correct" => 0, "explanation" => "MFA adds extra security layers beyond just a password. Even if someone steals your password, they still need the second factor."]
+            [
+                "question" => "What is phishing?\n\nThis is a common cyber attack that targets users through deceptive communication.",
+                "options" => [
+                    "Deceptive emails or sites that try to steal information like logins.",
+                    "A legitimate way to catch fish online.",
+                    "Fishing for real tuna with enterprise-grade hooks."
+                ],
+                "correct" => 0,
+                "explanation" => "Phishing is a cybersecurity attack where criminals send fake emails or create fake websites to trick people into giving away sensitive information."
+            ],
+            [
+                "question" => "What is multi-factor authentication (MFA)?",
+                "options" => [
+                    "An extra login factor (e.g., app code, key) to protect accounts.",
+                    "Asking a colleague to say 'please' twice before logging in."
+                ],
+                "correct" => 0,
+                "explanation" => "MFA adds extra security layers beyond just a password. Even if someone steals your password, they still need the second factor."
+            ],
+            [
+                "question" => "What should you do if you receive a suspicious email?\n\nThe email claims to be from your bank and asks you to click a link urgently.",
+                "options" => [
+                    "Click the link to check if it's real.",
+                    "Reply with your account details.",
+                    "Delete the email or report it to IT.",
+                    "Forward it to all your colleagues."
+                ],
+                "correct" => 2,
+                "explanation" => "Never click suspicious links or reply with personal info. Report it to IT or delete it."
+            ]
         ];
 
         foreach ($defaultQuestions as $index => $q) {
@@ -542,6 +562,27 @@ class QuizManager {
              FROM answers WHERE session_id = ? AND player_id = ? ORDER BY question_index",
             [$this->sessionId, $playerId]
         );
+    }
+
+    /**
+     * Get ALL answers for ALL questions (for Results tab)
+     */
+    public function getAllAnswers(): array {
+        $rows = $this->db->fetchAll(
+            "SELECT player_id as playerId, question_index as question, answer_index as answer, is_correct as isCorrect, timestamp 
+             FROM answers WHERE session_id = ? ORDER BY question_index, timestamp",
+            [$this->sessionId]
+        );
+        
+        return array_map(function($row) {
+            return [
+                'playerId' => $row['playerId'],
+                'question' => (int)$row['question'],
+                'answer' => (int)$row['answer'],
+                'isCorrect' => (bool)$row['isCorrect'],
+                'timestamp' => (float)$row['timestamp']
+            ];
+        }, $rows);
     }
 
     /**
