@@ -1,107 +1,160 @@
-# Copilot Coding Agent Instructions for "quizzera"
+# Copilot Coding Agent Instructions for Quizzera
+
+> **Trust these instructions.** Only search if information here is incomplete or found to be incorrect.
 
 ## Repository Overview
-"quizzera" is an interactive quiz platform designed for multiplayer quiz games. It has a modularized architecture featuring a PHP/SQLite backend and a frontend built with vanilla JavaScript ES6 modules. The quiz application supports real-time interactions using player and admin interfaces.
 
-### Repository Details
-- **Owner**: VanBelfer
-- **GitHub URL**: [VanBelfer/quizzera](https://github.com/VanBelfer/quizzera)
-- **Default Branch**: `main`
-- **Languages**:
-  - PHP: 55.3%
-  - JavaScript: 20.2%
-  - Hack: 16.5%
-  - CSS: 6.6%
-  - Shell: 1.4%
-- **Repository Size**: ~250 KB
-- **Visibility**: Public
+**Quizzera** is an interactive multiplayer quiz platform for classroom use, featuring real-time buzzer functionality, teacher controls, and student scoring. It uses a PHP/SQLite backend with a vanilla JavaScript ES6 modules frontend.
+
+| Property | Value |
+|----------|-------|
+| **Languages** | PHP (55%), JavaScript (20%), CSS (7%), Shell (1%) |
+| **Backend** | PHP 8.x with SQLite (WAL mode) |
+| **Frontend** | Vanilla JS ES6 modules (no bundler) |
+| **Database** | `data/quiz.db` (SQLite) |
 
 ---
 
-## Build and Validate Instructions
+## Project Structure
 
-### Environment Setup
-1. **Prerequisites**:
-   - PHP 8.2 or higher
-   - SQLite 3
-   - A web server (e.g., Apache or NGINX) with `mod_rewrite` enabled.
-   - Node.js (v16+) and npm for managing JavaScript dependencies and bundling assets (if required).
-
-2. **Install PHP Dependencies**:
-   Use `composer` to install dependencies.
-   ```bash
-   composer install
-   ```
-
-3. **Database Setup**:
-   Ensure the `data/quiz.db` SQLite database file exists or initialize it using migrations (if applicable).
-
-### Running and Validating Changes
-1. **Start a Local Development Server**:
-   ```bash
-   php -S localhost:8080 -t public/
-   ```
-   This serves the `public/` directory as the document root.
-
-2. **Access the Application**:
-   - Player interface: [http://localhost:8080/index-modular.php](http://localhost:8080/index-modular.php)
-   - Admin interface: [http://localhost:8080/admin-modular.php](http://localhost:8080/admin-modular.php)
-
-3. **Test API Endpoints**:
-   Utilize `curl` or Postman to validate the `public/api.php` endpoints. For example:
-   ```bash
-   curl -X POST -H "Content-Type: application/json" \
-   -d '{"action":"getGameState"}' http://localhost:8080/api.php
-   ```
-
-4. **Run Tests**:
-   Execute PHP Unit tests:
-   ```bash
-   ./vendor/bin/phpunit
-   ```
-
-5. **Lint Code**:
-   - PHP: Run `phpcs` to ensure code standards compliance (PSR-12 recommended).
-     ```bash
-     ./vendor/bin/phpcs src/ --standard=PSR12
-     ```
-   - JavaScript: Use ESLint for JS validation:
-     ```bash
-     npx eslint public/assets/js/
-     ```
+```
+quizzera/
+├── public/                    # Web root (serve this directory)
+│   ├── index-modular.php      # Player interface (PRIMARY)
+│   ├── admin-modular.php      # Admin/teacher interface (PRIMARY)
+│   ├── index.php              # Player interface (legacy duplicate)
+│   ├── admin.php              # Admin interface (legacy duplicate)
+│   ├── api.php                # Central API controller (ALL backend endpoints)
+│   └── assets/
+│       ├── css/               # Modular CSS files
+│       │   ├── variables.css  # CSS custom properties (--cyan-400, --bg-gray-*, etc.)
+│       │   ├── base.css, buttons.css, forms.css, animations.css
+│       │   ├── components/    # Shared: help-panel, notifications, modal, progress, badges, cards
+│       │   ├── admin/         # Admin-specific: dashboard, tabs, game-controls, question-editor, notes-editor, results
+│       │   └── player/        # Player-specific: login, buzzer, options, end-screen, notes-panel
+│       └── js/
+│           ├── PlayerApp.js   # Player entry point
+│           ├── AdminApp.js    # Admin entry point
+│           ├── core/          # api.js (ApiClient), state.js (StateManager), utils.js
+│           ├── components/    # Shared: HelpPanel, NetworkStatus, MessageSystem, MarkdownRenderer, Modal, ActionFeedback
+│           ├── admin/         # GameControl, QuestionEditor, SessionManager, NotesEditor, TabsNavigation
+│           └── player/        # BuzzerPhase, OptionsPhase, EndScreen, AudioManager, KeyboardShortcuts, ScreenManager
+├── src/                       # Backend PHP classes
+│   ├── Database.php           # SQLite connection with WAL mode
+│   └── QuizManager.php        # Core game logic (buzzers, scoring, state management)
+├── data/
+│   └── quiz.db                # SQLite database (auto-created if missing)
+├── test-modular.sh            # Comprehensive test script
+├── CLAUDE.md                  # Detailed architecture documentation (reference this for deep context)
+├── ROADMAP.md                 # Future development plans
+├── migrate.php                # LEGACY - migration already completed, do not use
+└── legacy_dont_edit/          # LEGACY - do not modify files in this directory
+```
 
 ---
 
-## Project Layout Highlights
-- **Backend (PHP)**:
-  - `/data`: Contains the SQLite database (`quiz.db`).
-  - `/src`: Core PHP code, e.g., `src/QuizManager.php` (game logic).
-  - `/public/api.php`: Central API controller for handling requests.
-- **Frontend (JavaScript/CSS)**:
-  - `/public/assets/js`: Modularized ES6 JavaScript, main entry points are:
-    - `PlayerApp.js` for player-side logic.
-    - `AdminApp.js` for admin-side logic.
-  - `/public/assets/css`: Contains CSS files and components (`variables.css` for shared styles).
+## Build & Run Instructions
 
-- **Scripts**:
-  - Testing: `./vendor/bin/phpunit`
-  - Linting:
-    - PHP: `./vendor/bin/phpcs`
-    - JavaScript: `npx eslint`
-  - Serve locally: `php -S localhost:8080 -t public/`
+### Prerequisites
+- PHP 8.2+ with SQLite extension enabled
+- No composer/npm dependencies required - this is a zero-dependency project
 
----
+### Start Development Server
+```bash
+php -S localhost:8080 -t public/
+```
 
-## Validation Steps
-### Pre-Commit Validation
-- Always run the linter for PHP and JavaScript before committing.
-- Verify functionality with manual API calls or unit tests to avoid server errors.
+### Access the Application
+- **Player interface**: http://localhost:8080/index-modular.php
+- **Admin interface**: http://localhost:8080/admin-modular.php
 
-### CI/CD and Workflows
-No CI/CD workflows are currently defined in `.github/workflows/`. Consider checking dependencies manually and defining a pipeline in the future.
+### Database
+The SQLite database (`data/quiz.db`) is auto-initialized by `src/Database.php` on first run. Ensure PHP has write access to the `data/` directory.
 
 ---
 
-### Additional Notes
-- Trust this document’s steps for testing and validation. Search should only be performed for missing validation cases or debugging.
-- As of now, continuous integration setup (e.g., GitHub Actions) does not exist. Manual validation steps are required.
+## Testing & Validation
+
+### Primary Test Script
+**Always run the test script to validate changes:**
+```bash
+./test-modular.sh
+# Or with custom URL:
+./test-modular.sh http://localhost:8080
+```
+
+This script validates:
+- All CSS and JS module availability (HTTP 200 checks)
+- HTML pages load correctly
+- ES module import syntax
+- CSS variables presence
+- JS export syntax
+- Full API endpoint flow (reset → join → start → buzz → answer → reveal → next)
+- SQLite database tables exist
+
+### Manual API Testing
+```bash
+# Get game state
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"action":"getGameState"}' http://localhost:8080/api.php
+
+# Join as player
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"action":"joinGame","nickname":"TestPlayer"}' http://localhost:8080/api.php
+
+# Reset game
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"action":"resetGame"}' http://localhost:8080/api.php
+```
+
+### Key API Actions
+| Player Actions | Admin Actions |
+|----------------|---------------|
+| `joinGame`, `getGameState`, `pressBuzzer`, `submitAnswer`, `getPlayerSummary`, `getNotes` | `startGame`, `showOptions`, `revealCorrect`, `nextQuestion`, `resetGame`, `softReset`, `getGameData`, `saveNotes` |
+
+---
+
+## Architecture Notes
+
+### Game State & Phases
+```javascript
+gameState: {
+  gameStarted: boolean,
+  currentQuestion: number,
+  phase: 'waiting' | 'question_shown' | 'options_shown' | 'reveal' | 'finished',
+  answers: [{playerId, question, answer, isCorrect, timestamp}]
+}
+```
+**Phase order check**: `finished` → `!gameStarted` → active phases
+
+### Polling Intervals
+- Player: 500ms
+- Admin: 1000ms
+- Change detection via `stateVersion` integer
+
+### CSS Theming
+All colors use CSS custom properties defined in `variables.css`:
+- Primary: `--cyan-400/500/600`
+- Success/Error: `--green-500`, `--red-500`
+- Backgrounds: `--bg-gray-700/800/900`
+
+---
+
+## Important Warnings
+
+1. **Do NOT run `composer install`** - This project has no composer.json
+2. **Do NOT run `npm install`** - No Node.js dependencies exist
+3. **Do NOT modify `legacy_dont_edit/`** - Contains deprecated code
+4. **Do NOT use `migrate.php`** - Migration is already complete
+5. **`index.php` and `admin.php` are legacy duplicates** - Prefer `-modular` versions
+6. **The `data/` directory must be writable** by PHP for SQLite
+
+---
+
+## For More Context
+
+Refer to `CLAUDE.md` in the repository root for:
+- Detailed game state structure
+- Complete API action list
+- Historical context on the JSON→SQLite migration
+- Full directory tree with file purposes
