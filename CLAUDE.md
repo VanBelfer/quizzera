@@ -1,4 +1,61 @@
+# Quizerka - Claude Context Document
+
+> **TL;DR for Claude**: Interactive quiz platform with PHP/SQLite backend and vanilla JS ES6 modules frontend. See Quick Reference below for essential context.
+
 I host it on my vps.
+
+---
+
+## 🚀 Quick Reference (Read This First!)
+
+### Essential Files
+| File | Purpose |
+|------|---------|
+| `public/api.php` | ALL backend API endpoints |
+| `src/QuizManager.php` | Core game logic |
+| `public/assets/js/PlayerApp.js` | Player main entry |
+| `public/assets/js/AdminApp.js` | Admin main entry |
+| `public/assets/js/core/api.js` | ApiClient class |
+| `public/assets/js/core/state.js` | StateManager with polling |
+
+### Game State Structure
+```javascript
+gameState: {
+  gameStarted: boolean,
+  currentQuestion: number,
+  phase: 'waiting' | 'question_shown' | 'options_shown' | 'reveal' | 'finished',
+  answers: [{playerId, question, answer, isCorrect, timestamp}]  // ARRAY!
+}
+```
+
+### Key Patterns
+- **Polling**: StateManager polls every 500ms (player) / 1000ms (admin)
+- **Change detection**: `stateVersion` integer increments on state change
+- **Phase order check**: `finished` → `!gameStarted` → active phases
+- **Notes API**: Returns `{content, updatedAt}` object
+
+### Common API Actions
+```bash
+# Player
+joinGame, getGameState, pressBuzzer, submitAnswer, getPlayerSummary, getNotes
+
+# Admin  
+startGame, showOptions, revealCorrect, nextQuestion, getGameData, saveNotes
+```
+
+### CSS Variables (variables.css)
+```css
+--cyan-400/500/600  /* Primary */    --green-500, --red-500  /* Success/Error */
+--bg-gray-700/800/900  /* Backgrounds */    --text-white, --text-gray-300  /* Text */
+```
+
+### Testing
+```bash
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"action":"getGameState"}' http://localhost:8080/api.php
+```
+
+---
 
 ## ✅ MIGRATION COMPLETED - SQLite Backend + Modular Frontend
 

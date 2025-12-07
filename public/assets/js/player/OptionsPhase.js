@@ -181,11 +181,11 @@ export class OptionsPhase {
         // Insert after the button
         buttonElement.parentNode?.insertBefore(feedbackEl, buttonElement.nextSibling);
         
-        // Also show a toast notification
+        // Also show a toast notification (2 seconds duration)
         if (window.showSuccess && isCorrect) {
-            window.showSuccess('Correct answer!');
+            window.showSuccess('Correct answer!', 2000);
         } else if (window.showError && !isCorrect) {
-            window.showError('Incorrect answer');
+            window.showError('Incorrect answer', 2000);
         }
     }
 
