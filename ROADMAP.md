@@ -206,7 +206,7 @@ CREATE TABLE content_blocks (
 ### Progress Tracking (Works Without Admin)
 ```javascript
 studentProgress = {
-    odlessonId: "lesson_001",
+    lessonId: "lesson_001",
     startedAt: "2024-01-15T10:00:00Z",
     sections: {
         "section_001": { 
@@ -451,10 +451,13 @@ student = {
 // Adding a new block type (e.g., "poll")
 // 1. Create: /public/assets/js/blocks/PollBlock.js
 export class PollBlock extends BaseBlock {
-    static type = 'poll';
+    static type = 'poll';  // Unique identifier for this block type
     static schema = { question: 'string', options: 'array' };
     
+    // Render block content into the provided container element
     render(container) { /* ... */ }
+    
+    // Return completion status: { completed: boolean, progress: number }
     getCompletionStatus() { /* ... */ }
 }
 
@@ -466,10 +469,15 @@ export class PollBlock extends BaseBlock {
 // Adding a new task type (e.g., "drag-drop")
 // 1. Create: /public/assets/js/tasks/DragDropTask.js
 export class DragDropTask extends BaseTask {
-    static type = 'drag_drop';
+    static type = 'drag_drop';  // Unique identifier for this task type
     
+    // Render task UI into the provided container element
     render(container) { /* ... */ }
+    
+    // Validate student's answer, returns { valid: boolean, feedback: string }
     validate() { /* ... */ }
+    
+    // Calculate and return score as number (0-100)
     getScore() { /* ... */ }
 }
 
