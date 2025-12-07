@@ -20,6 +20,41 @@
 
 ---
 
+## 🎓 Phase 0.5: Content Delivery Modes (PRIORITY)
+
+> **Critical for the platform vision**: Support content delivery with or without real-time admin control.
+
+### Delivery Mode Types
+The platform must support multiple delivery paradigms:
+
+| Mode | Admin Required | Student Control | Use Case |
+|------|----------------|-----------------|----------|
+| **Live/Synchronized** | ✅ Yes | ❌ None | Real-time classroom, teacher controls pace |
+| **Self-Paced** | ❌ No | ✅ Full | Homework, self-study, asynchronous learning |
+| **Guided** | ⚠️ Optional | ⚠️ Partial | Admin can monitor but student advances themselves |
+| **Assessment** | ❌ No | ⚠️ Limited | Timed tests, no backtracking |
+
+### Implementation
+```javascript
+lesson.settings = {
+    deliveryMode: 'self-paced' | 'live' | 'guided' | 'assessment',
+    allowBackNavigation: true,
+    autoAdvance: false,
+    requireCompletion: true,  // Must complete section to proceed
+    showProgress: true,
+    adminOverride: true       // Admin can take control anytime
+}
+```
+
+### Tasks
+- [ ] Add `deliveryMode` to lesson settings schema
+- [ ] Implement student-controlled navigation for self-paced mode
+- [ ] Add "Take Control" / "Release Control" toggle for admin in guided mode
+- [ ] Create progress tracking that works without admin presence
+- [ ] Support seamless switching between modes mid-lesson
+
+---
+
 ## 🚀 Phase 1: Core Platform Infrastructure
 
 ### 1.1 Multi-Module Architecture
@@ -69,6 +104,57 @@ CREATE TABLE lesson_sections (
 
 ---
 
+## 📚 Phase 1.5: Content Blocks (Mixed Content Sections)
+
+> **Design Principle**: Sections contain mixed content blocks, not rigid module boundaries. This enables rich, flowing educational content.
+
+### Block Types
+Instead of switching between separate modules, a single section can contain multiple block types:
+
+```
+Section: "Introduction to Phishing"
+├── Block 1: Text (markdown content explaining concept)
+├── Block 2: Video (YouTube embed demonstrating attack)
+├── Block 3: Interactive (embedded 2-question mini-quiz)
+├── Block 4: Text (summary points)
+└── Block 5: Task (fill-in-the-blanks exercise)
+```
+
+### Supported Block Types
+| Block Type | Interactive | Completion Criteria |
+|------------|-------------|---------------------|
+| `text` | No | View / scroll to end |
+| `video` | No | Watch X% or duration |
+| `image` | No | View |
+| `quiz` | Yes | Submit answers |
+| `task` | Yes | Complete exercise |
+| `embed` | Varies | Custom |
+| `code` | Optional | Run / submit |
+| `audio` | No | Listen X% |
+
+### Content Block Schema
+```sql
+CREATE TABLE content_blocks (
+    id TEXT PRIMARY KEY,
+    section_id TEXT,
+    block_type TEXT,  -- 'text', 'video', 'image', 'quiz', 'task', 'embed', 'code', 'audio'
+    content JSON,
+    order_index INTEGER,
+    required BOOLEAN DEFAULT false,  -- Must interact to proceed
+    completion_criteria JSON  -- e.g., {"type": "view", "duration": 10} or {"type": "score", "min": 70}
+);
+```
+
+### Tasks
+- [ ] Design ContentBlock base class with common interface
+- [ ] Create BlockRenderer component that delegates to type-specific renderers
+- [ ] Implement block completion tracking
+- [ ] Add inline quiz/task embedding within content flow
+- [ ] Support "read-only" content blocks (no interaction required)
+- [ ] Create block editor UI for admin (drag-drop ordering)
+
+---
+
 ## 📊 Phase 2: Slides/Presentation Module
 
 ### 2.1 Slide Types
@@ -110,6 +196,64 @@ CREATE TABLE lesson_sections (
     }
 }
 ```
+
+---
+
+## 🚦 Phase 2.5: Progress & Gating System
+
+> **Enables self-paced learning**: Students can progress independently with optional checkpoints and requirements.
+
+### Progress Tracking (Works Without Admin)
+```javascript
+studentProgress = {
+    lessonId: "lesson_001",
+    startedAt: "2024-01-15T10:00:00Z",
+    sections: {
+        "section_001": { 
+            status: "completed", 
+            score: 85, 
+            completedAt: "2024-01-15T10:15:00Z",
+            attempts: 1
+        },
+        "section_002": { 
+            status: "in_progress", 
+            currentBlock: 3,
+            blockProgress: { "block_1": true, "block_2": true, "block_3": false }
+        },
+        "section_003": { status: "locked" }
+    },
+    overallProgress: 45  // percentage
+}
+```
+
+### Gating Rules
+| Gate Type | Description | Example |
+|-----------|-------------|---------|
+| Sequential | Complete previous to unlock next | Section 2 requires Section 1 |
+| Score-based | Minimum score required | Need 70%+ to proceed |
+| Time-based | Available after specific date/time | Unlocks on Monday |
+| Prerequisite | Requires completing other lessons | Lesson B requires Lesson A |
+| Manual | Admin unlocks manually | Teacher approval needed |
+
+### Branching Content (Adaptive Learning)
+```javascript
+section.branching = {
+    evaluateAfter: "completion",  // or "score"
+    rules: [
+        { condition: "score < 50", goto: "section_remedial_basic" },
+        { condition: "score < 70", goto: "section_remedial_advanced" },
+        { condition: "score >= 70", goto: "section_next" }
+    ]
+}
+```
+
+### Tasks
+- [ ] Create StudentProgress tracking service
+- [ ] Implement localStorage persistence for anonymous progress
+- [ ] Add section locking/unlocking logic
+- [ ] Build progress visualization (progress bar, section map)
+- [ ] Implement branching content router
+- [ ] Add "resume where you left off" functionality
 
 ---
 
@@ -199,19 +343,43 @@ CREATE TABLE lesson_sections (
 
 ---
 
-## 🔐 Phase 6: User Management (Optional)
+## 👤 Phase 6: Identity & Progress Persistence
 
-### 6.1 Basic Auth
-- [ ] Teacher accounts
-- [ ] Student registration (optional)
-- [ ] Session codes/PINs
-- [ ] Guest mode
+> **Principle**: Learning should work without complex authentication. Provide multiple identity levels based on needs.
 
-### 6.2 Progress Tracking
-- [ ] Per-student progress
-- [ ] Historical results
-- [ ] Analytics dashboard
-- [ ] Export to CSV/Excel
+### Identity Tiers
+
+| Tier | Persistence | Cross-Device | Admin Visibility | Setup |
+|------|-------------|--------------|------------------|-------|
+| **Anonymous** | Session only | ❌ No | ❌ No | None |
+| **Named Guest** | localStorage | ❌ No | ✅ Yes (name only) | Enter name |
+| **Code-Based** | Server-side | ✅ Yes | ✅ Yes | Enter resume code |
+| **Registered** | Full account | ✅ Yes | ✅ Full | Email/password |
+
+### Resume Code System (Recommended Default)
+```javascript
+// Simple identity without auth
+student = {
+    id: "generated_uuid",
+    displayName: "John",
+    resumeCode: "QUIZ-ABC123",  // 8-char code for cross-device resume
+    createdAt: "2024-01-15T10:00:00Z",
+    lastActiveAt: "2024-01-15T14:30:00Z"
+}
+```
+
+**Flow:**
+1. Student enters name → gets UUID + resume code
+2. Progress saved to server with UUID
+3. On new device: enter resume code → retrieve progress
+4. Optional: email the resume code for safekeeping
+
+### Tasks
+- [ ] Implement localStorage-based progress for anonymous/named users
+- [ ] Create resume code generation and validation
+- [ ] Add "Email my resume code" option
+- [ ] Build progress sync between localStorage and server
+- [ ] Support multiple students on shared device (profile switcher)
 
 ---
 
@@ -262,6 +430,86 @@ CREATE TABLE lesson_sections (
 2. Video embeds
 3. Theme system
 4. Mobile optimization
+
+---
+
+## 🧩 Modularity & Extension Principles
+
+> **Core Architecture Goal**: Adding new block types, task types, or modules should NEVER break existing functionality.
+
+### Extension Points
+
+| Extension Type | How to Add | Existing Code Impact |
+|----------------|------------|----------------------|
+| New Block Type | Add renderer in `/js/blocks/` | None - BlockRenderer auto-discovers |
+| New Task Type | Add handler in `/js/tasks/` | None - TaskRunner auto-discovers |
+| New Module | Add folder in `/modules/` | None - ModuleLoader auto-discovers |
+| New Delivery Mode | Add mode handler | None - ModeManager delegates |
+
+### Block Type Registration
+```javascript
+// Adding a new block type (e.g., "poll")
+// 1. Create: /public/assets/js/blocks/PollBlock.js
+export class PollBlock extends BaseBlock {
+    static type = 'poll';  // Unique identifier for this block type
+    static schema = { question: 'string', options: 'array' };
+    
+    // Render block content into the provided container element
+    render(container) { /* ... */ }
+    
+    // Return completion status: { completed: boolean, progress: number }
+    getCompletionStatus() { /* ... */ }
+}
+
+// 2. Block is auto-registered - no changes to existing code needed
+```
+
+### Task Type Registration  
+```javascript
+// Adding a new task type (e.g., "drag-drop")
+// 1. Create: /public/assets/js/tasks/DragDropTask.js
+export class DragDropTask extends BaseTask {
+    static type = 'drag_drop';  // Unique identifier for this task type
+    
+    // Render task UI into the provided container element
+    render(container) { /* ... */ }
+    
+    // Validate student's answer, returns { valid: boolean, feedback: string }
+    validate() { /* ... */ }
+    
+    // Calculate and return score as number (0-100)
+    getScore() { /* ... */ }
+}
+
+// 2. Task is auto-registered - no changes to existing code needed
+```
+
+### Plugin Architecture (Future)
+```
+/plugins/
+├── plugin-manifest.json
+├── kahoot-import/
+│   ├── manifest.json
+│   └── importer.js
+├── google-classroom/
+│   └── ...
+└── custom-theme/
+    └── ...
+```
+
+### Testing New Extensions
+When adding any new block/task/module:
+1. Existing `test-modular.sh` must still pass
+2. Add type-specific tests in `/tests/{type}/`
+3. Verify no console errors on all existing content
+
+### Tasks
+- [ ] Implement BaseBlock class with required interface
+- [ ] Create BlockRegistry with auto-discovery
+- [ ] Implement BaseTask class with required interface
+- [ ] Create TaskRegistry with auto-discovery
+- [ ] Add extension validation (schema checking)
+- [ ] Document extension API for contributors
 
 ---
 
