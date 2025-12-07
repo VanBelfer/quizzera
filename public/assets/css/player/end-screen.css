@@ -154,3 +154,218 @@
 .trophy-icon.bronze {
     color: #cd7f32;
 }
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--bg-gray-700);
+}
+
+.stat-card.primary {
+    border-color: var(--cyan-500);
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), transparent);
+}
+
+.stat-card.success {
+    border-color: var(--green-500);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
+}
+
+.stat-card.warning {
+    border-color: var(--yellow-500);
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), transparent);
+}
+
+.stat-card.info {
+    border-color: var(--blue-500);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+}
+
+.stat-card.grade-excellent {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), transparent);
+}
+
+.stat-card.grade-great {
+    border-color: var(--green-500);
+}
+
+.stat-card.grade-good {
+    border-color: var(--blue-500);
+}
+
+.stat-card.grade-practice {
+    border-color: var(--purple-500);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-white);
+    line-height: 1.2;
+}
+
+.stat-value.grade {
+    font-size: 1.25rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-gray-400);
+    margin-top: 0.5rem;
+}
+
+/* Breakdown List */
+.breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.breakdown-list .breakdown-item {
+    background: var(--bg-gray-900);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: block;
+    border-left: 4px solid var(--bg-gray-600);
+}
+
+.breakdown-list .breakdown-item.correct {
+    border-left-color: var(--green-500);
+}
+
+.breakdown-list .breakdown-item.incorrect {
+    border-left-color: var(--red-500);
+}
+
+.breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.breakdown-number {
+    font-weight: 700;
+    color: var(--cyan-400);
+    font-size: 0.9rem;
+}
+
+.breakdown-status i {
+    font-size: 1.25rem;
+}
+
+.breakdown-item.correct .breakdown-status i {
+    color: var(--green-500);
+}
+
+.breakdown-item.incorrect .breakdown-status i {
+    color: var(--red-500);
+}
+
+.breakdown-question {
+    color: var(--text-gray-300);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.breakdown-answers {
+    font-size: 0.9rem;
+}
+
+.your-answer {
+    margin-bottom: 0.25rem;
+}
+
+.your-answer.correct {
+    color: var(--green-400);
+}
+
+.your-answer.incorrect {
+    color: var(--red-400);
+}
+
+.correct-answer {
+    color: var(--green-500);
+}
+
+.breakdown-explanation {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--bg-gray-700);
+    color: var(--text-gray-400);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.breakdown-explanation i {
+    color: var(--yellow-500);
+    margin-right: 0.5rem;
+}
+
+/* Detailed Breakdown Section */
+.detailed-breakdown {
+    background: var(--bg-gray-800);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.detailed-breakdown h3 {
+    color: var(--cyan-400);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* End Screen Actions */
+.end-screen-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.end-screen-actions .btn {
+    min-width: 180px;
+}
+
+/* Error message */
+.error-message {
+    color: var(--red-400);
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .end-screen-actions {
+        flex-direction: column;
+    }
+    
+    .end-screen-actions .btn {
+        width: 100%;
+    }
+}

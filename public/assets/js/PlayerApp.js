@@ -334,14 +334,9 @@ class PlayerApp {
     handleFinishedState(state) {
         this.modules.screenManager.show('end');
 
-        // Generate performance summary
-        this.modules.endScreen.showResults({
-            questions: state.questions,
-            answers: this.myAnswers,
-            allAnswers: state.gameState?.answers || {},
-            players: state.players,
-            playerId: this.playerId
-        });
+        // Set player ID and show end screen with results
+        this.modules.endScreen.setPlayerId(this.playerId);
+        this.modules.endScreen.show();
     }
 
     /**

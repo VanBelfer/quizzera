@@ -69,6 +69,12 @@ export class NotesEditor {
             closeBtn.addEventListener('click', () => this.hidePanel());
         }
 
+        // Export PDF button
+        const exportBtn = document.getElementById('exportNotesPdf');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => this.exportToPDF());
+        }
+
         // Formatting toolbar
         this.initToolbar();
 
@@ -159,8 +165,9 @@ export class NotesEditor {
         try {
             const result = await this.api.getNotes();
 
-            if (result.success) {
-                this.currentNotes = result.notes || '';
+            if (result.success && result.notes) {
+                // API returns {content, updatedAt}
+                this.currentNotes = result.notes.content || '';
                 this.renderNotes();
             }
         } catch (error) {
@@ -261,6 +268,182 @@ export class NotesEditor {
      */
     getNotes() {
         return this.currentNotes;
+    }
+
+    /**
+     * Export notes to PDF
+     */
+    exportToPDF() {
+        if (!this.currentNotes || !this.currentNotes.trim()) {
+            showError('No notes to export');
+            return;
+        }
+
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+        
+        if (!printWindow) {
+            showError('Please allow pop-ups to export PDF');
+            return;
+        }
+
+        const htmlContent = renderMarkdown(this.currentNotes);
+
+        const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Class Notes</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+            background: white;
+        }
+        
+        h1 {
+            font-size: 24pt;
+            color: #2563eb;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        h2 {
+            font-size: 16pt;
+            color: #1e40af;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 13pt;
+            color: #1e3a8a;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            page-break-after: avoid;
+        }
+        
+        p {
+            margin: 0 0 10px 0;
+            orphans: 3;
+            widows: 3;
+        }
+        
+        .pdf-date {
+            color: #666;
+            font-size: 10pt;
+            margin-bottom: 20px;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 5px;
+        }
+        
+        a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+        }
+        
+        pre {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+        
+        blockquote {
+            border-left: 3px solid #2563eb;
+            margin: 15px 0;
+            padding-left: 15px;
+            color: #555;
+            font-style: italic;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background: #f1f5f9;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            a {
+                color: #2563eb !important;
+                text-decoration: underline !important;
+            }
+            
+            a[href^="http"]:after {
+                content: " (" attr(href) ")";
+                font-size: 9pt;
+                color: #666;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Class Notes</h1>
+    <p class="pdf-date">Generated: ${new Date().toLocaleDateString()}</p>
+    <div class="notes-content">${htmlContent}</div>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        };
+    <\/script>
+</body>
+</html>
+        `;
+
+        printWindow.document.write(html);
+        printWindow.document.close();
     }
 }
 
